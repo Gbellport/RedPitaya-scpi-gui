@@ -104,12 +104,10 @@ def main_tab_event_handler(event, values, ssh):
             # Handle specific event
             if event == '-RP_REMOVE-':
                 RPMgr.remove_device(index=index)
-                TabMgr.close_all_tabs()
             elif event == '-RP_CONNECT-':
                 RPMgr.change_device_status(index=index, status='connected', ip=entry['ip'])
             elif event == '-RP_DISCONNECT-':
                 RPMgr.change_device_status(index=index, status='disconnected', ip=entry['ip'])
-                TabMgr.close_all_tabs()
         else:
             pass
             generate_popup('First select a RedPitaya from the table.')

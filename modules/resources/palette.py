@@ -20,7 +20,6 @@ GUI_theme = {'BACKGROUND'    : COLOR_BASE,
              'SLIDER_DEPTH'  : 0,
              'PROGRESS_DEPTH': 0}
 
-
 # Font
 GLOBAL_FONT     = 'Consolas'
 

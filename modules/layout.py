@@ -36,11 +36,11 @@ def generate_main_tab(rp_obj, gui_scale='normal'):
                       justification        = 'c',
                       hide_vertical_scroll = True,
                       selected_row_colors  = ('white', COLOR_ACCENT),
-                      key                  = '-QS_TABLE-')],
+                      key                  = '-RP_TABLE-')],
          [create_spacing(h=1)],
          [sg.Button('Disconnect',  size=(12, 1), key='-RP_DISCONNECT-'),
           sg.Button('Connect',     size=(12, 1), key='-RP_CONNECT-'),
-          sg.Button('Remove',      size=(12, 1), key='-R{_REMOVE-')]
+          sg.Button('Remove',      size=(12, 1), key='-RP_REMOVE-')]
         ], element_justification='c')]
     ]
 
