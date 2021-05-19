@@ -46,9 +46,9 @@ def generate_main_tab(rp_obj, gui_scale='normal'):
 
     return sg.Tab('Main', main_tab, element_justification='c', key='-MAIN_TAB-')
 
-# =========================================================================== #
-#   ALL TOD ALL TOD ALL TOD ALL TOD ALL TOD ALL TOD ALL TOD ALL TOD ALL TOD   #
-# =========================================================================== #
+# ========================================================================= #
+#   PINOUT PINOUT PINOUT PINOUT PINOUT PINOUT PINOUT PINOUT PINOUT PINOUT   #
+# ========================================================================= #
 
 def generate_pinout_tab(gui_scale='normal'):
 
@@ -57,8 +57,73 @@ def generate_pinout_tab(gui_scale='normal'):
             element_justification='c')]
     ]
 
-    return sg.Tab('PINOUT', pinout_tab, element_justification='c', key='-PINOUT_TAB-')
+    return sg.Tab('Pinout Reference', pinout_tab, element_justification='c', key='-PINOUT_TAB-')
 
+# =========================================================================== #
+#   DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO DIO   #
+# =========================================================================== #
+
+def generate_dio_tab(gui_scale='normal'):
+    dio_p_layout = []
+    dio_n_layout = []
+    n_dio = 8
+
+    dio_format = lambda n, p: [
+        sg.Combo(['', 'IN', 'OUT'], default_value='', readonly=True, enable_events=True, k=f'-DIO{n}_{p}_IN_OUT-'),
+        sg.Text(f'DIO{n}_{p}'), 
+        sg.Button('Set HIGH', visible=False, button_color='#59d47a', k=f'-DIO{n}_{p}_TOGGLE-'),
+        sg.Column([
+            [sg.Input('', disabled=True, size=(10, 1), disabled_readonly_background_color=COLOR_DARK, k=f'-DIO{n}_{p}_INPUT-'),
+             sg.Text(f'V')]
+            ], element_justification='l', visible=False, k=f'-DIO{n}_{p}_READING-')
+    ]
+
+    for n in range(0, n_dio):
+        dio_p_entry = dio_format(n=n, p='P')
+        dio_n_entry = dio_format(n=n, p='N')
+        dio_p_layout.append(dio_p_entry)
+        dio_n_layout.append(dio_n_entry)
+
+    dio_tab = [
+        [sg.Column(dio_p_layout, element_justification='l'),
+         create_spacing(w=2),
+         sg.VerticalSeparator(),
+         create_spacing(w=2),
+         sg.Column(dio_n_layout, element_justification='l')]
+    ]
+
+    return sg.Tab('DIO', dio_tab, element_justification='c', key='-DIO_TAB-')
+
+# ========================================================================== #
+#   SLOW SLOW SLOW SLOW SLOW SLOW SLOW SLOW SLOW SLOW SLOW SLOW SLOW SLOW    #
+# ========================================================================== #
+
+def generate_slow_tab(gui_scale='normal'):
+    slow_layout = []
+    n_dio = 4
+
+    slow_format = lambda n: [
+        sg.Checkbox('', default=False, enable_events=True, k=f'-AO{n}_CHECKBOX-'),
+        sg.Text(f'AO{n}'), 
+        sg.Input('', size=(10, 1), disabled=True, disabled_readonly_background_color=COLOR_DARK, k=f'-AO{n}_OUTPUT-'),
+        sg.Text(f'V'), 
+        create_spacing(w=5),
+        sg.Checkbox('', default=False, enable_events=True, k=f'-AI{n}_CHECKBOX-'),
+        sg.Text(f'AI{n}'), 
+        sg.Input('', disabled=True, size=(10, 1), disabled_readonly_background_color=COLOR_DARK, k=f'-AI{n}_INPUT-'),
+        sg.Text(f'V'), 
+    ]
+
+    for n in range(0, n_dio):
+        slow_entry = slow_format(n=n)
+        slow_layout.append(slow_entry)
+
+    slow_tab = [
+        [sg.Column(slow_layout, 
+            element_justification='c')]
+    ]
+
+    return sg.Tab('Slow Analogs', slow_tab, element_justification='c', key='-SLOW_TAB-')
 
 #==============================================================================#
 
@@ -67,6 +132,8 @@ def create_tabgroup(rp_obj, gui_scale='normal'):
     
     # First create main tab and all TODs tab
     tabs.append(generate_main_tab(rp_obj, gui_scale))
+    tabs.append(generate_dio_tab(gui_scale))
+    tabs.append(generate_slow_tab(gui_scale))
     tabs.append(generate_pinout_tab(gui_scale))
 
     # Compile tabs to send to main file
@@ -85,7 +152,7 @@ def create_layout(rp_obj, gui_scale='normal'):
             [sg.Text('RedPitaya\nSCPI GUI', font=(GLOBAL_FONT, 15, 'bold'))]
         ], element_justification='l'),
         create_spacing(w={'normal':35, 'small':17, 'xsmall':17}[gui_scale]),
-        sg.Text('[ Ver. 0.1 - 06.01.2021 ]', font=(GLOBAL_FONT, 12), text_color='gray'),
+        sg.Text('[ Ver. 0.1 - 05.18.2021 ]', font=(GLOBAL_FONT, 12), text_color='gray'),
         create_spacing(w={'normal':35, 'small':17, 'xsmall':17}[gui_scale]),
         sg.Column([
             [sg.Text('Connected\nRedPitaya\nSelector'),
@@ -121,4 +188,4 @@ def create_layout(rp_obj, gui_scale='normal'):
 
 # =========================================================================== #
 #   ARCHIVED ARCHIVED ARCHIVED ARCHIVED ARCHIVED ARCHIVED ARCHIVED ARCHIVED   #
-# =========================================================================== # create_spacing(w=8*gui_scale), 
+# =========================================================================== #  

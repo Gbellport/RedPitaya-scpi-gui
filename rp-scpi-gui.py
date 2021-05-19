@@ -93,9 +93,6 @@ def main_tab_event_handler(event, values, ssh):
         ip = values['-RP_IP-']
         RPMgr.add_device(name=name, ip=ip)
 
-    elif event == '-FORCE_SYNC-' and ssh is not None:
-        stdin, stdout, stderr = ssh.send_command('python3 {}/wr_sync.py'.format(REMOTE_SSH_PATH))
-
     elif event in ['-RP_REMOVE-', '-RP_CONNECT-', '-RP_DISCONNECT-']:
         if values['-RP_TABLE-'] != []:
             # Index of selected entry on table (and entry)
@@ -113,6 +110,41 @@ def main_tab_event_handler(event, values, ssh):
             generate_popup('First select a RedPitaya from the table.')
 
 
+def slow_tab_event_handler(event, values):
+    
+    if 'CHECKBOX' in event:
+        pin = event.split('_')[0].split('-')[1]
+        if 'I' in pin:
+            pass
+        elif 'O' in pin:
+            window[f'-{pin}_OUTPUT-'].update(disabled=(not values[event]))
+    pass
+
+
+def dio_tab_event_handler(event, values):
+    
+    if 'IN_OUT' in event:
+        pin = event.split('_IN_OUT')[0].split('-')[1]
+        if values[event] == 'IN':
+            window[f'-{pin}_TOGGLE-'].update(visible=False)
+            window[f'-{pin}_READING-'].update(visible=True)
+        elif values[event] == 'OUT':
+            window[f'-{pin}_TOGGLE-'].update(visible=True)
+            window[f'-{pin}_READING-'].update(visible=False)
+        elif values[event] == '':
+            window[f'-{pin}_TOGGLE-'].update(visible=False)
+            window[f'-{pin}_READING-'].update(visible=False)
+    
+    elif 'TOGGLE' in event:
+        pin = event.split('_TOGGLE')[0].split('-')[1]
+        if 'HIGH' in window[event].get_text():
+            print('oi')
+            window[event].update(text='Set LOW', button_color='#d45959')
+        elif 'LOW' in window[event].get_text():
+            print('io')
+            window[event].update(text='Set HIGH', button_color='#59d47a')
+    pass
+
 # ============================================================================ #
 #                            Main GUI loop                                     #
 # ============================================================================ #
@@ -123,6 +155,9 @@ while True:
     event, values = window.read(timeout=10)
     # Update time on each iteration
     window['-GUI_TIME-'].Update(get_time())
+
+    if event != '__TIMEOUT__':
+        print(event)
 
     # Unpack necessary variables
     try:
@@ -158,6 +193,18 @@ while True:
             #Thread(target=main_tab_event_handler, 
             #       args=(event, values)).start()
             main_tab_event_handler(event, values, device_ssh)
+
+    elif current_tab == '-SLOW_TAB-':
+        if event != [] and event != '__TIMEOUT__' and event is not None:
+            #Thread(target=main_tab_event_handler, 
+            #       args=(event, values)).start()
+            slow_tab_event_handler(event, values)
+
+    elif current_tab == '-DIO_TAB-':
+        if event != [] and event != '__TIMEOUT__' and event is not None:
+            #Thread(target=main_tab_event_handler, 
+            #       args=(event, values)).start()
+            dio_tab_event_handler(event, values)
 
 
 window.close()
